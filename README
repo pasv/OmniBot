@@ -1,0 +1,17 @@
+Omnibot
+Author: pasv (pasvninja@gmail.com)
+
+Omnibot will be a nextgen (lol) bot program written in a combination of languages but the underlying system will 
+most likely be written in python. There will be an extensive plugin framework that will allow the coder to edit
+any part of the code. The main modules will be Auth, Comm,
+
+The OmniBot model will be flexible in that it should be virtually protocol independent. We intend to support AIM,
+IRC, HTTP(s), and then perhaps more application specific protocols like twitter and facebook.
+
+The Comm model will be embued with an encryption thru and through. A majority of this encryption will be Base64'd
+AES256. Ideally we'd like to see the keytransfer happen out of band (SMS, email) if not we might be able to
+implement a public key model but this is well into the future.
+
+The Omnibots capabilities will be limited only to that of the imagination of coders that create the plugins. This
+is designed primarily as a developer toy and as such it should not be used to control particularly sensitive 
+systems. 
