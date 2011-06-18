@@ -1,1 +1,13 @@
 This is just a file for future ideas, features, etc
+
+So far the plugins have worked quite well for the OmniBot.main() features. But I'm thinking some 
+standards are in order. First of all there should be initial and ending plugins that either
+hook into parts of the end of the Category/module they are enhancing or the beginning. In this
+way the return values can be manipulated OR the initial settings can be modified. We're considering
+to extend this to classes but I'm looking into this as python isn't my first language. So essentially
+what we have seen for main() so far is:
+    PLUGINS_OMNIBOT_MAIN[0:x].main() functions
+    but then we should also see something like
+    PLUGINS_OMNIBOT_MAIN[0:x].end() functions checked upon? 
+
+I'm not sure this is my first time extending plugin functionality to a program but we'll see how it goes
