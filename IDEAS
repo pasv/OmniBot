@@ -11,3 +11,19 @@ what we have seen for main() so far is:
     PLUGINS_OMNIBOT_MAIN[0:x].end() functions checked upon? 
 
 I'm not sure this is my first time extending plugin functionality to a program but we'll see how it goes
+
+
+Source code / program structure:
+    *OmniLib/Comm - will store all connection methods (IRC/AIM/HTTP/Etc) - Each Comm/*/ will contain the initial
+    connection methods as well as 
+    *OmniLib/Auth - will store all user Authentication shits, it provides a common interface so that protocols dont
+    have to worry about the details of matters like loading keys and such. Ideall the Config module should interface
+    with the Auth module upon startup and add the required users/keys/etc
+    *OmniLib/plugins - This is self explanatory and has been described to a little length above, this is a work
+    in progress..
+    *OmniLib/Config - This is responsible for handling all things related to configuration of the program, this
+    includes loading from configuration files, loading from command line, and perhaps distrubuted/remote configging
+    (for large nets of bots)
+    
+Perhaps I am getting too far ahead of myself... for now the TODO is pointing for a functional IRC portion, we'll work
+on that then work our way back thru
