@@ -15,3 +15,7 @@ implement a public key model but this is well into the future.
 The Omnibots capabilities will be limited only to that of the imagination of coders that create the plugins. This
 is designed primarily as a developer toy and as such it should not be used to control particularly sensitive 
 systems. 
+
+
+Test branch will be used primarily until we have a working version which will go into the master. I originally
+just used the master branch as a test but I need to branch out..
