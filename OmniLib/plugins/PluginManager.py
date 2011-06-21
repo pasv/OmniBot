@@ -17,3 +17,12 @@ def LoadPlugins(category):
 	    ret_plugins.append(__import__(("OmniLib.plugins." + category + "." + plugin[:-3]), None, None, ("OmniLib.plugins." + category)))
 	    
     return ret_plugins
+    
+# This function allows the plugin to override any attributes of the caller (parent) - EXPERIMENTAL
+def PluginSync(parent, plugin):
+    print "parent:" + str(parent.__dict__)
+    print "plugin:" + str(plugin.__dict__)
+    for parent_key in parent.__dict__.keys():
+	for plugin_key in plugin.__dict__.keys():
+	    if plugin_key == parent_key and plugin_key != '__doc__' and plugin_key != '__module__':
+		parent.__dict__[plugin_key] = plugin.__dict__[plugin_key]

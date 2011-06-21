@@ -14,6 +14,9 @@ import OmniLib
 import OmniLib.debug
 import OmniLib.plugins
 import OmniLib.plugins.PluginManager
+import OmniLib.Auth
+import OmniLib.Comm
+import OmniLib.Comm.IRC
 #import OmniLib.Config as Conf
 
 NO_CONTINUE = 1
@@ -38,8 +41,10 @@ if __name__ == "__main__":
 
 
 
-if __name__ == "TEST":
-    ## SIMPLE TESTS - ignore
+if sys.argv[1] == "TEST":
+    ## SIMPLE TESTS - ignore   && damn this is a crappy way to do this... Clean up this hackiness
+    OmniLib.debug.debug("Entering TEST mode")
+    CA=OmniLib.Auth.CentralAuth()
     class Omni:
 	def funky(self):
 	    self.moof='moo'
