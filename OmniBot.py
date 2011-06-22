@@ -47,7 +47,6 @@ if __name__ == "__main__":
     IRC_thread.join()
 
 
-
 if sys.argv[1] == "TEST":
     ## SIMPLE TESTS - ignore   && damn this is a crappy way to do this... Clean up this hackiness
     OmniLib.debug.debug("Entering TEST mode")
