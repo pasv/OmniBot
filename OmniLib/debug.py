@@ -1,5 +1,5 @@
 import OmniLib
 
 def debug(msg):
-    print msg
+    print "DEBUG: " + str(msg)
     

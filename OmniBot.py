@@ -7,8 +7,9 @@
 
 import os
 import sys
-import re
-
+import re,time
+import threading
+#import queue
 sys.path.append(os.curdir + os.sep)
 import OmniLib
 import OmniLib.debug
@@ -16,7 +17,7 @@ import OmniLib.plugins
 import OmniLib.plugins.PluginManager
 import OmniLib.Auth
 import OmniLib.Comm
-import OmniLib.Comm.IRC
+import OmniLib.Comm.IRC.irc
 #import OmniLib.Config as Conf
 
 NO_CONTINUE = 1
@@ -37,7 +38,13 @@ if __name__ == "__main__":
 		    print plugin.__name__ + " didnt work for main()"
 	except NO_CONTINUE:
 	    pass
-
+    
+    # here goes nothing...
+    global_queue = 'addme' # queue.Queue()
+    IRC_thread=OmniLib.Comm.IRC.irc.IRC(global_queue)
+    IRC_thread.start()
+    print "entering forever loop" #testonly
+    IRC_thread.join()
 
 
 
