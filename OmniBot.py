@@ -9,6 +9,7 @@ import os
 import sys
 import re,time
 import threading
+import getopt
 #import queue
 sys.path.append(os.curdir + os.sep)
 import OmniLib
@@ -18,15 +19,43 @@ import OmniLib.plugins.PluginManager
 import OmniLib.Auth
 import OmniLib.Comm
 import OmniLib.Comm.IRC.irc
-#import OmniLib.Config as Conf
+import OmniLib.Config
 
+VERSION = "v0.1"
 NO_CONTINUE = 1
+
+def parse_args(argv):
+    try:
+	options, therest = getopt.getopt(argv[1:], 'c:dvh', ['config=','debug', 'version', 'help'])
+    
+	for opt, arg in options:
+	    if opt in ('-c', '--config'):
+		config_file = arg
+	    elif opt in ('-d', '--debug'):
+		debug = True
+	    elif opt in ('-v', '--version'):
+		print VERSION
+	    elif opt in ('-h', '--help'):
+		usage(argv[0])
+    except getopt.GetoptError:
+	usage(argv[0])
+
+def usage(path):
+    print "Usage:"
+    print path + " [-v] [-c file] [-d]"
+    print "\t-v\t\t--version"
+    print "\t-c file\t\t--config file"
+    print "\t-d\t\t--debug"
+    print "\t-h\t\t--help"
+    sys.exit(-1)
+
 
 if __name__ == "__main__":
     # And so begins the main
     OmniLib.editme="mooface"
     global PLUGINS_OMNIBOT_MAIN
     OmniLib.debug.debug("[+] Initializing OmniBot!")
+    parse_args(sys.argv)
     PLUGINS_OMNIBOT_MAIN = OmniLib.plugins.PluginManager.LoadPlugins("Main")
     OmniLib.debug.debug(PLUGINS_OMNIBOT_MAIN.__len__())
     if(PLUGINS_OMNIBOT_MAIN.__len__()> 0):
