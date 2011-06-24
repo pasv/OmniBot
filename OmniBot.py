@@ -53,8 +53,12 @@ def usage(path):
     print "\t-h\t\t--help"
     sys.exit(-1)
 
-
-
+#add more as we go along, extras should be plugins read from the command line args
+def load_plugins(extras):
+    # for extra in extras
+    OmniLib.plugs['main'] = OmniLib.plugins.PluginManager.LoadPlugins("Main")
+    OmniLib.plugs['irc'] = OmniLib.plugins.PluginManager.LoadPlugins("IRC")
+    
 if __name__ == "__main__":
     # And so begins the main
     OmniLib.editme="mooface"
@@ -65,7 +69,7 @@ if __name__ == "__main__":
 	## SIMPLE TESTS - ignore   && damn this is a crappy way to do this... Clean up this hackiness
 	print "Entering TEST mode"
     
-    OmniLib.plugs['main'] = OmniLib.plugins.PluginManager.LoadPlugins("Main")
+    load_plugins([])
 
     if(OmniLib.plugs['main'].__len__()> 0):
 	try:

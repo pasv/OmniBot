@@ -1,0 +1,9 @@
+
+import OmniLib
+import OmniLib.debug
+
+
+def e_PRIVMSG(irc_o, userstring, action, target, content):
+    if(content[0] == "!rude"):
+	OmniLib.debug.debug("!rude command issued from plugin")
+	irc_o.send("PRIVMSG " + target + " :blowme!")

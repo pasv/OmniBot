@@ -71,7 +71,10 @@ class IRC(threading.Thread):
 	target = str(data[2])
 	data[3]=data[3][1:] # strip out pesky ':'
 	content = data[3:]
-	OmniLib.plugs['main'][0].main()
+	OmniLib.plugs['main'][0].main() #for testing..
+	for plugin in OmniLib.plugs['IRC/event_PRIVMSG']:  #consider redo?
+	    plugin.e_PRIVMSG(self, userstring, action, target, content)
+	    
 	if(content[0] == "!quit"): #cuz it's annoying for now
 	    self.send("QUIT")
 	if(OmniLib.testing):
