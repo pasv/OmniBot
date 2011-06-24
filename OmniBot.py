@@ -24,6 +24,7 @@ import OmniLib.Config
 VERSION = "v0.1"
 NO_CONTINUE = 1
 debug = False
+OmniLib.plugs = {}
 OmniLib.testing = False #obviously this is for the devel branch only! take it out for master
 def parse_args(argv):
     try:
@@ -57,17 +58,18 @@ def usage(path):
 if __name__ == "__main__":
     # And so begins the main
     OmniLib.editme="mooface"
-    global PLUGINS_OMNIBOT_MAIN
+    # global OmniLib.plugs
     OmniLib.debug.debug("[+] Initializing OmniBot!")
     parse_args(sys.argv)
     if (OmniLib.testing):
 	## SIMPLE TESTS - ignore   && damn this is a crappy way to do this... Clean up this hackiness
 	print "Entering TEST mode"
-    PLUGINS_OMNIBOT_MAIN = OmniLib.plugins.PluginManager.LoadPlugins("Main")
-    OmniLib.debug.debug(PLUGINS_OMNIBOT_MAIN.__len__())
-    if(PLUGINS_OMNIBOT_MAIN.__len__()> 0):
+    
+    OmniLib.plugs['main'] = OmniLib.plugins.PluginManager.LoadPlugins("Main")
+
+    if(OmniLib.plugs['main'].__len__()> 0):
 	try:
-	    for plugin in PLUGINS_OMNIBOT_MAIN:
+	    for plugin in OmniLib.plugs['main']:
 		try:
 		    plugin.main()
 		except:

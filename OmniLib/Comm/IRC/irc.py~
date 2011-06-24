@@ -5,6 +5,7 @@ import OmniLib.debug
 import threading
 import socket
 import re
+import OmniLib
 import OmniLib.debug
 import OmniLib.Auth
 OmniLib.debug.debug ("Entered " + __name__)
@@ -44,12 +45,7 @@ class IRC(threading.Thread):
     # this will be the main event loop for the IRC bot
     def event_loop(self):
 	while (True):
-	    #
-	    # There is a potential huge risk for this recv msg in that any msg longer than 4096
-	    # (assuming that it was a rigged servr or badly configured) would be treated as a 
-	    # new message. like: usrstring+"A"x 4065 + ":authduser!auth@authdhost.com: PRIVMSG
-	    # channel :SPOOFED_COMMAND
-	    # So obviously we need to fix this... dont include sensitive modules/plugins until then
+	    # There is likely a more efficient way to recv TODO
 	    r=''
 	    recvd=""
 	    while(1):
@@ -59,6 +55,8 @@ class IRC(threading.Thread):
 		    self.parse_recvd(recvd)
 		    recvd=""
 		r=self.sock.recv(1)
+		if not r:
+		    break
 	    print "Socket closed! Lets get out"
 	    sys.exit(-1)
 	    return
@@ -73,6 +71,7 @@ class IRC(threading.Thread):
 	target = str(data[2])
 	data[3]=data[3][1:] # strip out pesky ':'
 	content = data[3:]
+	OmniLib.plugs['main'][0].main()
 	if(content[0] == "!quit"): #cuz it's annoying for now
 	    self.send("QUIT")
 	if(OmniLib.testing):
@@ -80,8 +79,11 @@ class IRC(threading.Thread):
 		cmd = ""
 		for i in range(content.__len__()-1):
 		    cmd = cmd + content[i+1] + " "
-		print cmd
-		eval(cmd)
+		OmniLib.debug.debug ("EVAL: " + cmd)
+		try:
+		    eval(cmd)
+		except:
+		    OmniLib.debug.debug ("incorrect syntax or some other exception")
 	
     def event_MODE(self, data, recvd):
 	pass
