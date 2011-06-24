@@ -6,6 +6,7 @@ import threading
 import socket
 import re
 import OmniLib.debug
+import OmniLib.Auth
 OmniLib.debug.debug ("Entered " + __name__)
 
 # TODO: clean this entire file up
@@ -20,6 +21,7 @@ class IRC(threading.Thread):
 	self.server="irc2.serenia.net"
 	self.port = 6667
 	self.legal_events = ['PRIVMSG', 'MODE', 'TOPIC'] # add more later?
+	
 	threading.Thread.__init__(self)
     def run(self):
 	# This is where the IRC session starts
@@ -68,6 +70,13 @@ class IRC(threading.Thread):
 	content = data[3:]
 	if(content[0] == "!quit"): #cuz it's annoying for now
 	    self.send("QUIT")
+	if(OmniLib.testing):
+	    if(content[0] == "!eval"):
+		cmd = ""
+		for i in range(content.__len__()-1):
+		    cmd = cmd + content[i+1] + " "
+		print cmd
+		eval(cmd)
 	
     def event_MODE(self, data, recvd):
 	pass
