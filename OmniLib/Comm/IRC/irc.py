@@ -50,13 +50,20 @@ class IRC(threading.Thread):
 	    # new message. like: usrstring+"A"x 4065 + ":authduser!auth@authdhost.com: PRIVMSG
 	    # channel :SPOOFED_COMMAND
 	    # So obviously we need to fix this... dont include sensitive modules/plugins until then
-	    recvd=self.sock.recv(4096) #optionally configure this size
-	    if(len(recvd) == 0): #this is a simple test case..
-		print "Socket closed! Lets get out"
-		sys.exit(-1)
-		return
-	    OmniLib.debug.debug( "RECV: " + str(recvd) )#for a test
-	    self.parse_recvd(recvd)
+	    r=''
+	    recvd=""
+	    while(1):
+		recvd=recvd+str(r)
+		if(r == '\n'):
+		    OmniLib.debug.debug( "RECV: " + str(recvd) )#for a test
+		    self.parse_recvd(recvd)
+		    recvd=""
+		r=self.sock.recv(1)
+		if not r:
+		    break
+	    print "Socket closed! Lets get out"
+	    sys.exit(-1)
+	    return
     # TODO: find better ways to handle all this memory it is a LOT of copy operations, perhaps
     # work by reference?
     #Design consideration: Im sending both the parsed data and recvd because recvd will contain
@@ -75,7 +82,7 @@ class IRC(threading.Thread):
 		cmd = ""
 		for i in range(content.__len__()-1):
 		    cmd = cmd + content[i+1] + " "
-		print cmd
+		OmniLib.debug.debug ("EVAL: " + cmd)
 		eval(cmd)
 	
     def event_MODE(self, data, recvd):
@@ -107,7 +114,7 @@ class IRC(threading.Thread):
 	#else    #unknown case...
 	#    return
 	#testing...
-	print "userstring: " + userstring + " content: " + str(content[0][1:]+str(content[1:])) #pesky ';'
+	#print "userstring: " + userstring + " content: " + str(content[0][1:]+str(content[1:])) #pesky ';'
 	return
 	
     # TODO: add better sending handler, check sentlen against msglen
