@@ -27,3 +27,16 @@ Source code / program structure:
     
 Perhaps I am getting too far ahead of myself... for now the TODO is pointing for a functional IRC portion, we'll work
 on that then work our way back thru
+
+Ideas for auth:
+    keyexchange can take place over email. for example: '!authorize --request_key' would email a key back to a
+    pre-specified account in the config file then give it a short timeout value for the end user to !authorize <key>
+    optionally only a portion of the key should be sent while the rest is used for encryption. maybe the first 4 bytes?
+    so we've got this model for auth:
+	Bot: starts->reads config file->adds email to nick/user pairing->waits for !authorize
+	User: sends-PM->!authorize --request_key
+	Bot: checks against nick/host-> generates random key -> gives it a timeout value-> sends it to email addr
+	User: sends-PM->!authorize <first-4bytes of key>
+	Bot: adds nick/host to authorized list
+    Also we may want multiple authorization levels: Admin, Power, Friend, Etc.
+    

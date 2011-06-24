@@ -73,6 +73,13 @@ class IRC(threading.Thread):
 	pass
     def event_TOPIC(self, data, recvd):
 	pass
+    def event_PART(self, data, recvd):
+	pass
+    def event_JOIN(self, data, recvd):
+	pass
+    def event_KICK(self, data, recvd):
+	pass
+    
     #obviously not the best way of doing things, index out of bounds can happen quite easily, fix me
     def parse_recvd(self, recvd):
 	#insert plugin handling here

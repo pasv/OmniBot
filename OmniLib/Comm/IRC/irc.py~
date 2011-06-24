@@ -11,7 +11,6 @@ OmniLib.debug.debug ("Entered " + __name__)
 # TODO: clean this entire file up
 # TODO: code against more exceptions/faults/server errors/nick collisions/etc
 
-
 class IRC(threading.Thread):
     def __init__(self,global_queue):
 	self.global_queue = global_queue
