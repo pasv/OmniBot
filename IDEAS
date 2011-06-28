@@ -40,3 +40,7 @@ Ideas for auth:
 	Bot: adds nick/host to authorized list
     Also we may want multiple authorization levels: Admin, Power, Friend, Etc.
     
+    Another note for security: I want each user to have a private key for the keygen in addition to the auth library checking 
+    their user string. eventually we can progress on to having individual send/recv wrappers for each user that handle with
+    encryption going both ways. Each user will have their own key. the key exchange will most likely also happen over email
+    at the time of the keygen
