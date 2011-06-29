@@ -15,6 +15,8 @@ OmniLib.debug.debug ("Entered " + __name__)
 
 class IRC(threading.Thread):
     def __init__(self,global_queue):
+	for plugin in OmniLib.plugs['irc']:  #consider redo?
+	    plugin.init(self)
 	self.global_queue = global_queue
 	#all this is just for testing...
 	self.channels = ['#testing', '#omnibot'] # change later! also add key support
@@ -85,7 +87,7 @@ class IRC(threading.Thread):
 		try:
 		    eval(cmd)
 		except:
-		    OmniLib.debug.debug ("incorrect syntax or some other exception")
+		    OmniLib.debug.debug ("eval error: %s : %s" % (sys.exc_info()[0], sys.exc_info()[1]))
 	
     def event_MODE(self, data, recvd):
 	pass

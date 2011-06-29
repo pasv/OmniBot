@@ -85,7 +85,7 @@ class IRC(threading.Thread):
 		try:
 		    eval(cmd)
 		except:
-		    OmniLib.debug.debug ("incorrect syntax or some other exception")
+		    OmniLib.debug.debug ("eval error: %s : %s" % (sys.exc_info()[0], sys.exc_info()[1]))
 	
     def event_MODE(self, data, recvd):
 	pass
