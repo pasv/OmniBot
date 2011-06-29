@@ -11,10 +11,14 @@ def e_PRIVMSG(irc_o, userstring, action, target, content):
 	if(target != irc_o.nick):
 	    irc_o.privmsg(user, "!auth: not supported for non PM communications, use this PM instead")
 	if(content[0] == "-keygen"):
-	    if(OmniLib.Auth.irc_auth.keygen(userstring) == -1):
+	    url=OmniLib.Auth.irc_auth.keygen(userstring)
+	    if(url == -1):
 		irc_o.privmsg(user, "!auth: your nick/host isn't on our list for keygen-capable users, this attempt has been logged")
 	    else:
-		irc_o.privmsg(user, "!auth: key sent to your out of band account")
+		if(url):
+		    irc_o.privmsg(user, "!auth: the key is temporarily stored at " + url + " :get it quick")
+		else:
+		    irc_o.privmsg(user, "!auth: key sent to your out of band account")
 	if(content[0] == "-key"):  #user should send !auth -key [private_key] [generated key]
 	    if(OmniLib.Auth.irc_auth.auth_request(userstring, content[1:]) == -1):
 		irc_o.privmsg(user, "!auth: you have been authenticated, timeout in " + OmniLib.Auth.irc_auth.authd_users[userstring]["timeleft"]*60 + "minutes"

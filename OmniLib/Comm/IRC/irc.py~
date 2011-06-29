@@ -71,8 +71,7 @@ class IRC(threading.Thread):
 	target = str(data[2])
 	data[3]=data[3][1:] # strip out pesky ':'
 	content = data[3:]
-	OmniLib.plugs['main'][0].main() #for testing..
-	for plugin in OmniLib.plugs['IRC/event_PRIVMSG']:  #consider redo?
+	for plugin in OmniLib.plugs['irc']:  #consider redo?
 	    plugin.e_PRIVMSG(self, userstring, action, target, content)
 	    
 	if(content[0] == "!quit"): #cuz it's annoying for now
@@ -99,6 +98,10 @@ class IRC(threading.Thread):
     def event_KICK(self, data, recvd):
 	pass
     
+    # hook this later for encryption/logging
+    def privmsg(self, target, msg):
+	self.send("PRIVMSG " + target + " :"+msg)
+	
     #obviously not the best way of doing things, index out of bounds can happen quite easily, fix me
     def parse_recvd(self, recvd):
 	#insert plugin handling here
