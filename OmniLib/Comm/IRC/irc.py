@@ -80,6 +80,9 @@ class IRC(threading.Thread):
 	    self.send("QUIT")
 	if(OmniLib.testing):
 	    if(content[0] == "!eval"):
+		# TODO: check for authorized flag instead of just trustd users
+		if(userstring not in OmniLib.Auth.irc_auth.trustd_users):
+		    return -1 # drop it silently
 		cmd = ""
 		for i in range(content.__len__()-1):
 		    cmd = cmd + content[i+1] + " "
