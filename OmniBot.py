@@ -31,6 +31,7 @@ import OmniLib.debug
 import OmniLib.plugins
 import OmniLib.plugins.PluginManager
 import OmniLib.Auth
+import OmniLib.Auth.users
 import OmniLib.Comm
 import OmniLib.Comm.IRC.irc
 import OmniLib.Config
@@ -39,7 +40,9 @@ VERSION = "v0.1"
 NO_CONTINUE = 1
 debug = False
 OmniLib.plugs = {}
+OmniLib.Auth.user_db = {} # this is the user object dictionary users['username'].members
 OmniLib.testing = False #obviously this is for the devel branch only! take it out for master
+
 def parse_args(argv):
     try:
 	options, therest = getopt.getopt(argv[1:], 'c:dvht', ['config=','debug', 'version', 'help', 'testing'])
@@ -99,7 +102,7 @@ if __name__ == "__main__":
     global_queue = 'addme' # queue.Queue()
     IRC_thread=OmniLib.Comm.IRC.irc.IRC(global_queue)
     IRC_thread.start()
-    print "entering forever loop" #testonly
+
     IRC_thread.join()
 
 

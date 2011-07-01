@@ -1,6 +1,7 @@
 import OmniLib
 import OmniLib.debug
 import OmniLib.Auth.smtp
+import OmniLib.Auth.users
 import OmniLib.Auth.pastebin
 
 authd_users = {}
@@ -8,51 +9,43 @@ trustd_users = []
 
 def init():
     OmniLib.debug.debug("Initializing Authentication module")
-    authd_users = {}
-    trustd_users = []
-    #ahem some default test options anyone?
-    trustd_users.append(":pasv!~l@sa-9AC43B12.socal.res.rr.com")
-    authd_users[":pasv!~l@sa-9AC43B12.socal.res.rr.com"] = {} # inside the dictionary is another dictionary :)
-    authd_users[":pasv!~l@sa-9AC43B12.socal.res.rr.com"]["priv_level"] = "admin" # privlevels admin - user
-    authd_users[":pasv!~l@sa-9AC43B12.socal.res.rr.com"]["timeleft"] = 9999999 # when timeleft =< 0 authflag sets to false
-    authd_users[":pasv!~l@sa-9AC43B12.socal.res.rr.com"]["email"] = "pasvninja@gmail.com" # email to send genkey to
-    authd_users[":pasv!~l@sa-9AC43B12.socal.res.rr.com"]["authflag"] = True # determines if the user is genkeyed or not
-    authd_users[":pasv!~l@sa-9AC43B12.socal.res.rr.com"]["genkey"] = "z85qZo!skdq"
-    authd_users[":pasv!~l@sa-9AC43B12.socal.res.rr.com"]["private_key"] = "priv8"
 
-def keygen(userstring, private_key):
+    #ahem some default test options anyone?
+    OmniLib.Auth.irc_auth.trustd_users.append(":pasv!~l@sa-9AC43B12.socal.res.rr.com")
+    OmniLib.Auth.user_db["pasv"] = OmniLib.Auth.users.user(['irc'])
+    OmniLib.Auth.user_db["pasv"].priv_level = "admin" # privlevels admin - user
+    OmniLib.Auth.user_db["pasv"].timeleft = 9999999 # when timeleft =< 0 authflag sets to false
+    OmniLib.Auth.user_db["pasv"].email = "pasvninja@gmail.com" # email to send genkey to
+    OmniLib.Auth.user_db["pasv"].authflag = True # determines if the user is genkeyed or not
+    OmniLib.Auth.user_db["pasv"].genkey = "z85qZo!skdq"
+    OmniLib.Auth.user_db["pasv"].private_key = "priv8"
+    
+def keygen(user,userstring, private_key):
     if(userstring not in trustd_users):
 	# log attempt!
 	return -1
-    # insert keygenning code here. 
-    msg = "User: " + userstring + " has generated this key: " + genkey
-    if(authd_users[userstring]['email'] == "pastebin"):
+    key=OmniLib.Auth.user_db[user].keygen(private_key)
+    if(key == -1):
+	return -1
+    msg = "OmniBot generated genkey " + key + " for user: " + user + "\n authenticate with: !auth -key [private_key] " + key
+    if(OmniLib.Auth.user_db[user].email == "pastebin"):
 	url=OmniLib.Auth.pastebin.post_it(msg) #yes that is insecure but some people dont have gmail..
 	return url
     else:
-	OmniLib.Auth.smtp.send_email(authd_users[userstring]['email'], msg)
+	OmniLib.Auth.smtp.send_email(OmniLib.Auth.user_db[user].email, msg)
 	return 0
 
 def auth_request(userstring, private_key, genkey):
     if(not authd_users.has_key(userstring)):
 	return -1
-    if(authd_users[userstring]['private_key'] != private_key or authd_users[userstring]['genkey'] != genkey):
-	return -1
-    else:
-	authd_users[userstring]['authflag'] = True
-	authd_users[userstring]['timeout'] = 60*60 # redundant?
-	return 1 # success
+    return OmniLib.Auth.user_db[user].authenticate(private_key, genkey)
 
 # we should really hash/encrypt the genkey/authkey with DES or something..
 def add_trusted(userstring, priv_level, email):
-    if(not authd_users.has_key(userstring)):
-	authd_users[userstring] = {}
-	authd_users[userstring]['priv_level'] = priv_level
-	authd_users[userstring]['timeleft'] = 60*60 # (in seconds) 1 hour; kind of harsh?
-	authd_users[userstring]['email'] = email
-	authd_users[userstring]['authflag'] = False # default: every user starts out unauth'd
-	authd_users[userstring]['private_key'] = "changeme" # find a better way to do this
-	authd_users[userstring]['genkey'] = "" # check against this later #add timeout to this as well..
+    (nick, username, host) = OmniLib.Comm.IRC.irc.parse_userstring(userstring)
+    OmniLib.Auth.irc_auth.trusted_users.append(userstring)
+    if(not OmniLib.Auth.user_db.has_key(nick)):
+	OmniLib.Auth.user_db[user] = OmniLib.Auth.users.user(['irc'])
     else:
 	return -1 # user exists! use mod_users()
 	

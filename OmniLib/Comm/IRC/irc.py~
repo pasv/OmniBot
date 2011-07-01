@@ -12,7 +12,11 @@ OmniLib.debug.debug ("Entered " + __name__)
 
 # TODO: clean this entire file up
 # TODO: code against more exceptions/faults/server errors/nick collisions/etc
-
+def parse_userstring(userstring):
+    nick = userstring[:userstring.find("!")].replace(":", "")
+    username = userstring[userstring.find("!")+1:userstring.find("@")].replace("~", "")
+    host = userstring[userstring.find("@")+1:]
+    return (nick,username,host)
 class IRC(threading.Thread):
     def __init__(self,global_queue):
 	for plugin in OmniLib.plugs['irc']:  #consider redo?
@@ -80,6 +84,9 @@ class IRC(threading.Thread):
 	    self.send("QUIT")
 	if(OmniLib.testing):
 	    if(content[0] == "!eval"):
+		# TODO: check for authorized flag instead of just trustd users
+		if(userstring not in OmniLib.Auth.irc_auth.trustd_users):
+		    return -1 # drop it silently
 		cmd = ""
 		for i in range(content.__len__()-1):
 		    cmd = cmd + content[i+1] + " "

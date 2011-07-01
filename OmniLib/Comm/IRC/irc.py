@@ -12,6 +12,11 @@ OmniLib.debug.debug ("Entered " + __name__)
 
 # TODO: clean this entire file up
 # TODO: code against more exceptions/faults/server errors/nick collisions/etc
+def parse_userstring(userstring):
+    nick = userstring[:userstring.find("!")].replace(":", "")
+    username = userstring[userstring.find("!")+1:userstring.find("@")].replace("~", "")
+    host = userstring[userstring.find("@")+1:]
+    return (nick,username,host)
 
 class IRC(threading.Thread):
     def __init__(self,global_queue):
