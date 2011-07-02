@@ -61,10 +61,11 @@ class user:
     # these keys may be decrypted first before entering the object, the host should be checked too
     # optionally but again this is outside of the object
     def authenticate(self, genkey, private_key):
-	if(self.genkey != genkey and self.private_key != private_key and gen_timeout > 0):
+	if(self.genkey != genkey or self.private_key != private_key or self.gen_timeout > 0):
 	    return False
 	else:
 	    self.genkey = ""
+	    self.gen_timeout = 0
 	    self.is_authd = True
 	    self.timeout = 60*60 # start timer
 	    return True
