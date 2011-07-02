@@ -35,7 +35,8 @@ class user:
     def decrypt(self, msg):
 	msg=base64.b64decode(msg)
 	enc = AES.new(self.encryption_key, AES.MODE_CBC)
-	enc.decrypt(msg)
+	msg=enc.decrypt(msg)
+	msg=base64.b64decode(msg)
 	return msg
 	
 	
@@ -55,7 +56,7 @@ class user:
 	    return -1
 	self.genkey=os.urandom(32) # 256 bit keys
 	self.encryption_key = os.urandom(32) # 256 bit key, base64 it when u print it in the email..
-	self.genkey=base64.b64encode(genkey) #gotta make it printable
+	self.genkey=base64.b64encode(self.genkey) #gotta make it printable
 	
     # these keys may be decrypted first before entering the object, the host should be checked too
     # optionally but again this is outside of the object
