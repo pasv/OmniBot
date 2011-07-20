@@ -5,6 +5,7 @@ import OmniLib.debug
 import threading
 import socket
 import re
+import time
 import OmniLib
 import OmniLib.debug
 import OmniLib.Auth
@@ -29,6 +30,8 @@ class IRC(threading.Thread):
 	self.server="irc2.serenia.net"
 	self.port = 6667
 	self.legal_events = ['PRIVMSG', 'MODE', 'TOPIC'] # add more later?
+	self.last_send_time = 0
+	self.sent_per_min = 0
 	
 	threading.Thread.__init__(self)
     def run(self):
@@ -141,6 +144,17 @@ class IRC(threading.Thread):
 	
     # TODO: add better sending handler, check sentlen against msglen
     def send(self, msg):
+	# I'm not sure how this flood protection will pan out, TODO: testing
+	#time out support, consider different option than sleep:
+	if(time.time()-self.last_send_time < 60.0):
+	    self.sent_per_min += 1
+	else:
+	    self.sent_per_min = 1
+	if(self.sent_per_min >= 10): #check this number against standards for IRCd flooding
+	    time.sleep(10)
+	    self.sent_per_min = 0
+	self.last_send_time=time.time()
+	print "sent_per_min = " + str(self.sent_per_min) + " last send time = " + str(self.last_send_time)
 	msg = msg + "\r\n"
 	try:
 	    self.sock.send(msg)
