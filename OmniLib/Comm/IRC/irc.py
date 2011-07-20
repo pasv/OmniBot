@@ -110,7 +110,13 @@ class IRC(threading.Thread):
     
     # hook this later for encryption/logging
     def privmsg(self, target, msg):
-	self.send("PRIVMSG " + target + " :"+msg)
+	newline = 0
+	newline=msg.find("\n")
+	if(newline > 0):
+	    self.send("PRIVMSG " + target + " :"+msg[:newline])
+	    self.privmsg(target, msg[newline+1:])
+	else:
+	    self.send("PRIVMSG " + target + " :"+msg)
 	
     #obviously not the best way of doing things, index out of bounds can happen quite easily, fix me
     def parse_recvd(self, recvd):

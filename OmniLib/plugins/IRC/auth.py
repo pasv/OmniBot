@@ -12,7 +12,7 @@ def e_PRIVMSG(irc_o, userstring, action, target, content):
     if(content[0] == "!auth"):
 	if(target != irc_o.nick):
 	    irc_o.privmsg(nick, "!auth: not supported for non PM communications, use this PM instead")
-	if(content.__len__) < 3):
+	if(content.__len__() < 3):
 	    irc_o.privmsg(nick, show_help())
 	    return -1
 	
@@ -71,4 +71,4 @@ def show_admin_help():
 
 # TODO: make this a plugin hook too. ie: ret can be edited to display plugin commands and their help
 def show_help():
-    return """OmniBot commands:\r\n!auth : authentication related commands:\r\n\t-genkey [private_key] : generates a genkey for authentication\r\n\t-key [private_key] [genkey] : authenticates a user""""
+    return """OmniBot commands:\n!auth : authentication related commands:\n\t-genkey [private_key] : generates a genkey for authentication\n\t-key [private_key] [genkey] : authenticates a user"""

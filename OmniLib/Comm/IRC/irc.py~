@@ -17,6 +17,7 @@ def parse_userstring(userstring):
     username = userstring[userstring.find("!")+1:userstring.find("@")].replace("~", "")
     host = userstring[userstring.find("@")+1:]
     return (nick,username,host)
+
 class IRC(threading.Thread):
     def __init__(self,global_queue):
 	for plugin in OmniLib.plugs['irc']:  #consider redo?
@@ -109,7 +110,12 @@ class IRC(threading.Thread):
     
     # hook this later for encryption/logging
     def privmsg(self, target, msg):
-	self.send("PRIVMSG " + target + " :"+msg)
+	newline=msg.find("\n")
+	if(newline):
+	    self.send("PRIVMSG " + target + " :"+msg[:newline])
+	    self.privmsg(target, msg[newline+1:])
+	else:
+	    self.send("PRIVMSG " + target + " :"+msg)
 	
     #obviously not the best way of doing things, index out of bounds can happen quite easily, fix me
     def parse_recvd(self, recvd):
