@@ -20,6 +20,7 @@ class user:
 	self.is_authd = False
 	self.priv_level = ""
 	self.email = ""
+	self.userstring = ""
 	self.username = "" # for irc
 	self.nick = "" # for irc
 	self.screen_name = "" # for AIM

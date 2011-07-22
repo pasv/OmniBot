@@ -19,7 +19,9 @@ def parse_userstring(userstring):
     host = userstring[userstring.find("@")+1:]
     return (nick,username,host)
 
+
 class IRC(threading.Thread):
+    # IRC class accepts server/nick info upon initiation
     def __init__(self,global_queue):
 	for plugin in OmniLib.plugs['irc']:  #consider redo?
 	    plugin.init(self)
@@ -79,7 +81,7 @@ class IRC(threading.Thread):
 	userstring = str(data[0])
 	action = str(data[1])
 	target = str(data[2])
-	data[3]=data[3][1:] # strip out pesky ':'
+	# data[3]=data[3][1:] # strip out pesky ':'
 	content = data[3:]
 	for plugin in OmniLib.plugs['irc']:  #consider redo?
 	    plugin.e_PRIVMSG(self, userstring, action, target, content)
@@ -131,16 +133,29 @@ class IRC(threading.Thread):
 	if(userstring == 'PING'): #TODO: make this a little prettier
 	    self.send("PONG " + action)
 	    return
+	
+	#strip out ':' in front of privmsgs
+	if(action == 'PRIVMSG'):
+	    data[3]=data[3][1:]
+	
+	# Should be better written as a try statement? TODO
+	if(userstring in OmniLib.Auth.irc_auth.trustd_users and action == 'PRIVMSG'):
+	    nick,username,host=parse_userstring(userstring)
+	    if(nick in OmniLib.Auth.user_db):
+		if(OmniLib.Auth.user_db[nick].encryption_enabled):
+		    data[3:]=OmniLib.Auth.user_db[nick].decrypt(recvd[recvd.find(':'):]).split() # spaces are ignored, so we need to rejoin? bettersolution??!
+	    
 	target = str(data[2])
 	content = data[3:]
 	
-	if(action in self.legal_events): #here is our dispatch
-	    exec("self.event_" + action + "(data, recvd)")
-	#else    #unknown case...
-	#    return
-	#testing...
-	#print "userstring: " + userstring + " content: " + str(content[0][1:]+str(content[1:])) #pesky ';'
-	return
+	function = getattr(self, "event_%s" % action, None)
+	if(function == None):
+	    pass #unhandled event
+	else:
+	    try:
+		function(data,recvd)
+	    except:
+		print "Unexpected error:", sys.exc_info()[0], sys.exc_info()[1]
 	
     # TODO: add better sending handler, check sentlen against msglen
     def send(self, msg):

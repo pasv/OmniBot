@@ -12,10 +12,7 @@ def e_PRIVMSG(irc_o, userstring, action, target, content):
     if(content[0] == "!auth"):
 	if(target != irc_o.nick):
 	    irc_o.privmsg(nick, "!auth: not supported for non PM communications, use this PM instead")
-	if(content.__len__() < 3):
-	    irc_o.privmsg(nick, show_help())
-	    return -1
-	
+
 	if(content[1] == "-keygen"): # -keygen [private_key] ## this is so ppl cant keep spamming ur account
 	    url=OmniLib.Auth.irc_auth.keygen(nick, userstring, content[2])
 	    if(url == -1): #TODO: add logging
@@ -42,16 +39,16 @@ def e_PRIVMSG(irc_o, userstring, action, target, content):
 	    if(not OmniLib.Auth.user_db.has_key(nick)):
 		irc_o.privmsg(nick, "!auth: your nick/host isnt authenticated to admin level, this attempt has been logged")
 		return -1
-	    if(OmniLib.Auth.irc_auth.authd_users[userstring]["priv_level"] != "admin"): #consider changing this to irc_auth.is_admin(userstring) for in obj logging purposes
+	    if(OmniLib.Auth.user_db[nick].priv_level != "admin" or userstring not in OmniLib.Auth.irc_auth.trustd_users): #consider changing this to irc_auth.is_admin(userstring) for in obj logging purposes
 		irc_o.privmsg(nick, "!auth: your nick/host isnt authenticated to admin level, this attempt has been logged")
 		return -1
 	    else:
 		# admin commands: show [timeouts,authd_users,etc], add [userstring] [email address], remove [userstring]
 		if(content[2] == "show"):
 		    if(content[3] == "authd_users"):
-			irc_o.privmsg(nick, "!auth: userstring # priv_level # email # timeleft")
-			for u in OmniLib.Auth.irc_auth.authd_users.keys():
-			    irc_o.privmsg(nick, "!auth: " + u + " # " + OmniLib.Auth.irc_auth.authd_users[u]["priv_level"] + " # " + OmniLib.Auth.irc_auth.authd_users[u]["email"] + " # " + str(OmniLib.Auth.irc_auth.authd_users[u]["timeleft"]))
+			irc_o.privmsg(nick, "!auth: userstring # priv_level # email # timeleft # Encryption")
+			for u in OmniLib.Auth.user_db.keys():
+			    irc_o.privmsg(nick, "!auth: " + u + " # " + OmniLib.Auth.user_db[nick].priv_level + " # " + OmniLib.Auth.user_db[nick].email + " # " + str(OmniLib.Auth.user_db[nick].timeleft) + " # " + str(OmniLib.Auth.user_db[nick].encryption_enabled))
 		if(content[2] == "add"): #!auth add [userstring] [priv_level] [email address]
 		    if(content.__len__() != 6):
 			irc_o.privmsg(nick, show_admin_help())
