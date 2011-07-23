@@ -35,20 +35,21 @@ class user:
 	
     def decrypt(self, msg):
 	msg=base64.b64decode(msg)
-	enc = AES.new(self.encryption_key, AES.MODE_CBC)
+	iv=msg[:16] #first 16 bytes are our iv
+	msg=msg[16:] #other half the cipher text
+	enc = AES.new(self.encryption_key, AES.MODE_CBC, iv)
 	msg=enc.decrypt(msg)
 	msg=base64.b64decode(msg)
 	return msg
 	
-	
     def encrypt(self, msg):
-	enc = AES.new(self.encryption_key, AES.MODE_CBC)
 	msg = base64.b64encode(msg)
-
+	iv=os.urandom(16)
+	enc = AES.new(self.encryption_key, AES.MODE_CBC , iv)
 	if((msg.__len__() % 16) != 0):
 	    msg = msg + "="*(16-msg.__len__() % 16) # padding
-
 	msg=enc.encrypt(msg)
+	msg=iv+msg
 	msg=base64.b64encode(msg)
 	return msg    
 
