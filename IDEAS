@@ -43,4 +43,56 @@ Ideas for auth:
     Another note for security: I want each user to have a private key for the keygen in addition to the auth library checking 
     their user string. eventually we can progress on to having individual send/recv wrappers for each user that handle with
     encryption going both ways. Each user will have their own key. the key exchange will most likely also happen over email
-    at the time of the keygen
+    at the time of the keygeni
+
+
+Update:
+So I realized I have been doing it wrong up until this point. Having protocol specific plugins is cool but what the original
+goal of OmniBot was to have a cross-protocol layer to build applications upon. So what I need is a very well defined API
+before I even begin developing the code. The protocol specific plugins can stay for now, IRC is mostly working, the next
+will most likely be Twitter. The idea of this API to Omnibot will be message passing through several layers:
+(from top to bottom, input to process and eventually application):
+ 
+In to bot:
+/ \
+|  |
+|M |
+|E |   Application: The application will only receive the decrypted message along with flags confirming the authenticity of
+|S |		   the user (their priv level, etc) and do whatever processing the plugin's function requires.
+|S |   Authentication: Handles authentication on a per protocol basis. If the user is authenticated and encrypion enabled
+|A |   		       it will perform the necessary decryption routines based on the user's key
+|G |   Protocol: Handles connections and protocol specific identifiers + the input and passes it up to Auth ^
+|E |
+|  |
+
+Out from bot:
+
+|  |
+|M |
+|E |   Application: After recieving a message from the above process, it can send messages back to that user without needing 
+|S |		    to know what protocol it was handling (although the data is available in the message)
+|S |   Authentication: This will then encrypt (based on option) the message sent back to the user and send it down to protocol level
+|A |
+|G |   Protocol: The protocol level deals with the socket level sending similarly as the above except in reverse for send. 
+|E |
+\ /
+ V
+
+So what it comes down to is I need a very useful message object that supports multiple protocols, encorporates auth options (
+hosts, private keys, encryption flags, priv level), channel options (like a protocol flag), and finally the data to be sent
+down and up the stack.
+
+first mock up of the object would look something like this:
+class MessageObj(object):
+    def __init__(self):
+        # protocol specifics
+	self.protocol = ''
+	self.protocol_obj = none
+	# is authenticated?
+	self.is_auth = False
+	self.auth_obj = none
+	# channel -perhaps this should just go inside either auth or protocol... it is kind of specific in of itself tho
+	self.channel_obj = none # for IRC this would be the nickname/channel, for AIM this would be the SN, for HTTP the cookie, for twitter the user
+	
+
+Also to note: the omnibot irssi plugin seems to be buggy, :| still working on it.
