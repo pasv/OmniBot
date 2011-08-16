@@ -39,13 +39,14 @@ import OmniLib.Config
 VERSION = "v0.1"
 NO_CONTINUE = 1
 debug = False
+plugins_load = []
 OmniLib.plugs = {}
 OmniLib.Auth.user_db = {} # this is the user object dictionary users['username'].members
 OmniLib.testing = False #obviously this is for the devel branch only! take it out for master
 
 def parse_args(argv):
     try:
-	options, therest = getopt.getopt(argv[1:], 'c:dvht', ['config=','debug', 'version', 'help', 'testing'])
+	options, therest = getopt.getopt(argv[1:], 'c:dvhtp', ['config=','debug', 'version', 'help', 'testing', 'plugin'])
     
 	for opt, arg in options:
 	    if opt in ('-c', '--config'):
@@ -53,7 +54,10 @@ def parse_args(argv):
 	    elif opt in ('-d', '--debug'):
 		debug = True
 	    elif opt in ('-v', '--version'):
-		print VERSION
+                print VERSION
+		sys.exit(0)
+            elif opt in ('-p', '--plugin'):
+		plugins_load=arg.split(',')
 	    elif opt in ('-h', '--help'):
 		usage(argv[0])
 	    elif opt in ('-t', '--testing'):
@@ -67,12 +71,16 @@ def usage(path):
     print "\t-v\t\t--version"
     print "\t-c file\t\t--config file"
     print "\t-d\t\t--debug"
+    print "\t-p\t\t--plugin plugin1,plugin2,plugin3"
     print "\t-h\t\t--help"
     sys.exit(-1)
 
 #add more as we go along, extras should be plugins read from the command line args
 def load_plugins(extras):
     # for extra in extras
+    for e in extras:  #load ext (external) plugins
+        OmniLib.plugs['ext'].append(OmniLib.plugins.PluginManager.LoadPlugins_ext(e))
+
     OmniLib.plugs['main'] = OmniLib.plugins.PluginManager.LoadPlugins("Main")
     OmniLib.plugs['irc'] = OmniLib.plugins.PluginManager.LoadPlugins("IRC")
     
@@ -86,7 +94,7 @@ if __name__ == "__main__":
 	## SIMPLE TESTS - ignore   && damn this is a crappy way to do this... Clean up this hackiness
 	print "Entering TEST mode"
     
-    load_plugins([])
+    load_plugins(plugins_load)
 
     if(OmniLib.plugs['main'].__len__()> 0):
 	try:

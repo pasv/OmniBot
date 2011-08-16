@@ -17,6 +17,10 @@ def LoadPlugins(category):
 	    ret_plugins.append(__import__(("OmniLib.plugins." + category + "." + plugin[:-3]), None, None, ("OmniLib.plugins." + category)))
 	    
     return ret_plugins
+
+# TODO: fix this up, seems makeshift
+def LoadPlugins_ext(e):
+    return (__import__(("OmniLib.plugins." + "ext" + "." + e[:-3]), None, None, ("OmniLib.plugins." + "ext")))
     
 # This function allows the plugin to override any attributes of the caller (parent) - EXPERIMENTAL
 def PluginSync(parent, plugin):
