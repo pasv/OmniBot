@@ -96,3 +96,5 @@ class MessageObj(object):
 	
 
 Also to note: the omnibot irssi plugin seems to be buggy, :| still working on it.
+
+--testing commit with pydev here--
